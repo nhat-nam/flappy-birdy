@@ -9,7 +9,14 @@ function Bird(){
 
 	this.original_color = "white";
 	this.color = "white";
-	this.radius = 10;
+	this.height_radius = 10;
+	this.width_radius = 15
+
+	//38x24
+
+
+	this.img = new Image();
+	this.img.src = "./bird.png";
 
 	this.update = function(delta){
 
@@ -22,12 +29,28 @@ function Bird(){
 		this.color = this.original_color;
 	}
 	this.render = function(ctx){
-		ctx.fillStyle=this.color;
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.radius, 0, 360);
-		ctx.fill();
-		ctx.closePath();	
 
+ctx.fillStyle=this.color;
+		
+		if(this.dy > 180){
+		//facing down
+			ctx.save();
+			ctx.translate(this.x, this.y);
+			ctx.rotate(Math.PI/6);
+			ctx.drawImage(this.img, -19, -12);
+			ctx.restore();
+		}else if(this.dy < -20){
+			//facing up 
+			ctx.save();
+			ctx.translate(this.x, this.y);
+			ctx.rotate(-1*Math.PI/6);
+			ctx.drawImage(this.img, -19,-12);
+			ctx.restore();
+		}else {
+			//draw a bird
+			ctx.drawImage(this.img, this.x-19,this.y-12);
+
+		}
 	}
 	this.flap = function(){
 		//flapp
@@ -49,15 +72,15 @@ function Bird(){
 	}
 	
 this.collides = function(pipe){
-		if(this.x + this.radius >= pipe.x
-			&& this.x - this.radius <= pipe.x + pipe.width
-			&& this.y - this.radius <= pipe.y + pipe.height
-			&& this.y + this.radius >= pipe.y 
+		if(this.x + this.width_radius >= pipe.x
+			&& this.x - this.width_radius <= pipe.x + pipe.width
+			&& this.y - this.height_radius <= pipe.y + pipe.height
+			&& this.y + this.height_radius >= pipe.y 
 		
-		|| this.x + this.radius >= pipe.x
-			&& this.x - this.radius <= pipe.x + pipe.width
-			&& this.x - this.radius <= GAP + pipe.height + (HEIGHT - GAP + pipe.height)
-			&& this.y + this.radius >= GAP + pipe.height ){
+		|| this.x + this.width_radius >= pipe.x
+			&& this.x - this.width_radius <= pipe.x + pipe.width
+			&& this.y - this.height_radius <= GAP + pipe.height + (HEIGHT - GAP + pipe.height)
+			&& this.y + this.height_radius >= GAP + pipe.height ){
 
 			return true;
 		} return false;

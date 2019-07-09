@@ -20,6 +20,15 @@ function Game(context, width, height) {
    this.height = height;
    this._delta = 1000/100;
 //comments
+
+
+   //1157 x 288. 
+   this.background = new Image();
+   this.background.src = "./background.png";
+   this.background_speed = -20;
+   this.background_width = (HEIGHT/288)*1157;
+   this.background_x = 0;
+
    this.menu = new FlappyMenu(width, height);
    this.menu.init();
    this.player_1_points = 0;
@@ -62,6 +71,15 @@ this.drawInstructions = function(){
 
       }
       else if(this.game_state == "playing" || this.game_state == "serve"){
+         /* update background */
+
+         this.background_x = this.background_x + this.background_speed * (delta/1000);
+
+         if(this.background_x < -1* this.background_width + WIDTH+260){
+            this.background_x = 0;
+         }
+
+
          this.bird.update(delta);
          for(var i=0; i< this.pipes.length;i++){
             var pipe = this.pipes[i];
@@ -106,18 +124,18 @@ this.drawInstructions = function(){
    this.render = function() {
    		this.ctx.clearRect(0, 0, this.width, this.height);
    		this.ctx.fillStyle = "black";
-   		this.ctx.fillRect(0, 0, this.width, this.height);
-
+   		this.ctx.drawImage(this.background,this.background_x,0, this.background_width, HEIGHT);
+        
          if(this.game_state == "menu"){
             this.menu.render(this.ctx);
          }else{
             
-            
+            this.bird.render(this.ctx);
             for(var i=0; i< this.pipes.length;i++){
                var pipe = this.pipes[i];
                pipe.render(this.ctx);
             }
-            this.bird.render(this.ctx);
+
             this.drawScore();
 
          }
