@@ -21,6 +21,8 @@ function Game(context, width, height) {
    this._delta = 1000/100;
 //comments
 
+   this.high_score = 0;
+
 
    //1157 x 288. 
    this.background = new Image();
@@ -29,7 +31,7 @@ function Game(context, width, height) {
    this.background_width = (HEIGHT/288)*1157;
    this.background_x = 0;
 
-   this.menu = new FlappyMenu(width, height);
+   this.menu = new FlappyMenu(width, height, this);
    this.menu.init();
    this.player_1_points = 0;
  
@@ -56,21 +58,18 @@ function Game(context, width, height) {
 
    }
 
-
-this.drawInstructions = function(){
-            ctx.font = "16px Arial";
-            ctx.fillText("Press SPACE to continue", 490, 50);
-            ctx.filStyle = "white";
-         }
    this.update = function(delta) {
       
   
       if(this.game_state == "paused"){
-         this.drawInstructions();
-      }else if(this.game_state == "game_over"){
 
-      }
-      else if(this.game_state == "playing" || this.game_state == "serve"){
+      }else if(this.game_state == "game_over"){
+         if(this.player_points > this.high_score){
+            this.high_score = this.player_points;
+         }
+      }else if(this.game_state == "menu"){
+         
+      }else if(this.game_state == "playing" || this.game_state == "serve"){
          /* update background */
 
          this.background_x = this.background_x + this.background_speed * (delta/1000);
@@ -128,25 +127,51 @@ this.drawInstructions = function(){
         
          if(this.game_state == "menu"){
             this.menu.render(this.ctx);
-         }else{
-            
+         }else if(this.game_state == "high_score"){
+            this.menu.render(this.ctx);
+            this.drawHighScore();  
+         }else if(this.game_state == "paused"){
+
+           
+            for(var i=0; i< this.pipes.length;i++){
+               var pipe = this.pipes[i];
+               pipe.render(this.ctx);
+            }
             this.bird.render(this.ctx);
+            this.drawScore();
+            this.drawInstructions();
+               
+         } else{
             for(var i=0; i< this.pipes.length;i++){
                var pipe = this.pipes[i];
                pipe.render(this.ctx);
             }
 
             this.drawScore();
-
+            this.bird.render(this.ctx);
+         
          }
 
       }
 
+      this.drawInstructions = function(){
+            ctx.font = "900 16px 'Press Start 2P'";
+            ctx.fillStyle="black";
+            ctx.fillText("Press SPACE to continue", 20, 400);
+            ctx.filStyle = "white";
+         }
+
 
       this.drawScore = function(){
-         ctx.font = "16px Arial";
-         ctx.fillText(this.player_points, 300, 50);
-         ctx.filStyle = "white";
+         ctx.font = "25px 'Press Start 2P'";
+         ctx.fillText(this.player_points, 80, 50);
+         ctx.filStyle = "black";
+      }
+
+      this.drawHighScore = function(){
+         ctx.font = "25px 'Press Start 2P'";
+         ctx.fillText(this.player_points, 150, 50);
+         ctx.filStyle = "black";
       }
    this.init_pipes = function(){
          // temp pipe
@@ -179,11 +204,18 @@ window.onkeydown = function(e){
       if(e.key == " "){
          e.preventDefault();
 
+         if(game.game_state == "menu"){
+            game.game_state = "high_score"
+         }
+
+
          // add game_state checks here
 
-         game.unpause();
-         game.bird.flap();
          
+         if(game.game_state == "playing"){
+            game.bird.flap();
+         }
+         game.unpause();
       }
       if(e.key == "Enter"){
          if(game.game_state == "menu"){

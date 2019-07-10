@@ -23,9 +23,9 @@ function Menu(w, h){
 	this.renderTitle = function(ctx){
 
 			//render title
-		ctx.font = "30px Arial";
+		ctx.font = "100px 'FlappyBirdy'";
 		ctx.fillStyle = "black";
-		ctx.fillText(this.title, 400, 100);
+		ctx.fillText(this.title, 40, 100);
 	}
 
 	this.renderSelector = function(ctx,x, y){
@@ -36,20 +36,24 @@ function Menu(w, h){
 	}
 	this.renderOptions = function(ctx){
 		// loop through options....write text in middle of screen
-		ctx.font = "14px Arial";
+		ctx.font = "14px 'Press Start 2P'";
 		ctx.fillStyle="black";
 
 		for(var i = 0; i < this.options.length;i++){
 			// display current choice
 			if(this.current_option == i){
-				this.renderSelector(ctx, 390, 145+20*i);
+				this.renderSelector(ctx, 40, 145+20*i);
 			}
-			ctx.fillText(this.options[i], 400, 150 + 20 * i );
+			ctx.fillText(this.options[i], 50, 150 + 20 * i );
 		}
 	}
-	this.render = function(ctx){
+	this.renderBackground = function(ctx){
 		ctx.fillStyle = "white";
 		ctx.fillRect(0,0, this.width, this.height);
+	}
+	this.render = function(ctx){
+		
+		this.renderBackground(ctx);
 		this.renderTitle(ctx);
 		this.renderOptions(ctx);
 
