@@ -3,22 +3,19 @@ class SoundManager{
 	constructor(){
 		this.sounds = [];
 	}
-
-	playSound(key) = funciton(){
-
-	}
-
-	
-
-
-	stopSound(key) = function(){
+	addSound(key, el){
+		this.sounds[key] = el;
 
 	}
+	playSound(key){
+		if(this.sounds[key]){
+			this.sounds[key].play();
+		}
+	}
+	stopSound(key){
 
-	
-
-
-	pauseSound(key) = function(){
+	}
+	pauseSound(key){
 
 	}
 

@@ -1,4 +1,4 @@
-GAP = 80;
+GAP = 100;
 function Pipe(x, height){
 
 	this.x = x;

@@ -30,7 +30,7 @@ function Bird(){
 	}
 	this.render = function(ctx){
 
-ctx.fillStyle=this.color;
+		ctx.fillStyle=this.color;
 		
 		if(this.dy > 180){
 		//facing down
@@ -55,9 +55,9 @@ ctx.fillStyle=this.color;
 	this.flap = function(){
 		//flapp
 		if(this.dy < 0){
-			this.dy = this.dy - 200;
+			this.dy = this.dy - 850;
 		}else{
-			this.dy = -200;
+			this.dy = -350;
 		}
 		if(this.dy < -400){
 			this.dy = -400;
@@ -65,13 +65,14 @@ ctx.fillStyle=this.color;
 		//this.accel_y = 0;
 	}
 	this.reset = function(){
+		this.x = 200
+		this.y = 0
 		this.dx = 0;
-	    this.dy = 0;
-      	this.x = 500
-      	this.y = 250
+		this.dy = 200;
+		this.accel_y = 1000;
 	}
 	
-this.collides = function(pipe){
+	this.collides = function(pipe){
 		if(this.x + this.width_radius >= pipe.x
 			&& this.x - this.width_radius <= pipe.x + pipe.width
 			&& this.y - this.height_radius <= pipe.y + pipe.height
