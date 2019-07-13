@@ -25,11 +25,17 @@ function Game(context, width, height) {
    this.background_width = (HEIGHT/288)*1157;
    this.background_x = 0;
 
-   this.menu = new FlappyMenu(width, height, this);
-   this.menu.init();
-
    // high score manager
    this.highScoreManager = new HighScoreManager("FlappyBirdy");
+
+   this.menu = new FlappyMenu(width, height, this);
+   this.menu.init();
+   this.highscore_menu = new HighScoreMenu(width, height, this);
+   this.highscore_menu.init(this.highScoreManager);
+   this.over_menu = new GameOverMenu(width, height);
+   this.over_menu.init();
+   this.newhighscore_menu = new NewHighscoreMenu(width, height);
+   this.newhighscore_menu.init();
 
    // sound manager
    this.soundManager = new SoundManager();
@@ -40,12 +46,26 @@ function Game(context, width, height) {
    this.game_state = "menu";
    this.player_count = 1;
    this.player_points = 0;
-
+   this.player_name = "";
    // bird object
    this.bird = new Bird();
 
    // array of pipes
    this.pipes = [];
+
+   /**
+    * Reset game state variables
+    */ 
+   this.reset = function(){
+      this.background_x = 0;
+      this.bird.reset();
+      this.player_points = 0;
+
+      this.pipes = [];
+      this.init_pipes();
+      this.over_menu.current_option = 0;
+      this.menu.current_option = 0;
+   }
 
    /**
    *    Game Loop
@@ -68,19 +88,24 @@ function Game(context, width, height) {
   
       if(this.game_state == "paused"){
 
-      }else if(this.game_state == "game_over"){
-         if(  this.highScoreManager.isHighScore( this.player_points ) ){
-            // get their name
-            this.highScoreManager.addHighScore("nam", this.player_points);
-            
-            this.game_state = "high_score";
+      }else if(this.game_state == "free_falling"){
+         this.bird.update(delta);
+
+         if(this.bird.y + 10 >= HEIGHT){
+            if(  this.highScoreManager.isHighScore( this.player_points ) ){
+               // get their name
+               this.game_state = "new_highscore";
+            } else{
+               this.game_state = "game_over";
+            }
          }
+      }else if(this.game_state == "game_over"){
+
          this.bird.update(delta);
          //once bird is off the screen...then switch game states...
 
       }else if(this.game_state == "high_score"){
          this.bird.update(delta);
-
 
       }else if(this.game_state == "menu"){
          
@@ -98,17 +123,16 @@ function Game(context, width, height) {
          if(this.bird.y <=10){
             this.bird.y = 10;
          }
-         if(this.bird.y >= HEIGHT-15){
-            this.bird.y = HEIGHT-15;
+         if(this.bird.y - this.bird.height_radius >= HEIGHT){
+            this.game_state = "free_falling";
          }
-
 
          for(var i=0; i< this.pipes.length;i++){
             var pipe = this.pipes[i];
             pipe.update(delta);
 
             if(this.bird.collides(pipe)){
-               this.game_state = "game_over";
+               this.game_state = "free_falling";
             }
          }
          if(this.pipes[0].x + this.pipes[0].width+10 < 0){
@@ -154,6 +178,10 @@ function Game(context, width, height) {
         
          if(this.game_state == "menu"){
             this.menu.render(this.ctx);
+         }else if(this.game_state == "highscore"){
+
+            this.highscore_menu.render(this.ctx);
+
          }else if(this.game_state == "paused"){
             for(var i=0; i< this.pipes.length;i++){
                var pipe = this.pipes[i];
@@ -162,7 +190,7 @@ function Game(context, width, height) {
             this.bird.render(this.ctx);
             this.drawScore();
             this.drawInstructions();
-         } else{
+         }else{
             for(var i=0; i< this.pipes.length;i++){
                var pipe = this.pipes[i];
                pipe.render(this.ctx);
@@ -170,7 +198,13 @@ function Game(context, width, height) {
 
             this.drawScore();
             this.bird.render(this.ctx);
-         
+            if(this.game_state == "game_over"){
+
+               this.over_menu.render(this.ctx);
+            }else if(this.game_state == "new_highscore"){
+               // 
+               this.newhighscore_menu.render(this.ctx);
+            }
          }
 
    }
@@ -204,11 +238,47 @@ function Game(context, width, height) {
       this.game_state = "playing";
    }   
    this.startGame = function(){
+      this.reset();
       this.game_state = "playing";
-      this.init_pipes();
+   }
+   this.showHscore = function(){
+
    }
 }
 window.onkeydown = function(e){
+
+   if(game.game_state == "new_highscore"){
+      //e.preventDefault();
+      var alphabet = "-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      var key = e.key;
+      console.log(e);
+      if(alphabet.indexOf(key)>=0){
+
+         game.player_name = game.player_name + key.toUpperCase();
+
+         if(game.player_name.length > 3){
+            game.player_name = game.player_name.substring(0, 3);
+         }
+         game.newhighscore_menu.options[0].value = game.player_name;
+      }else if(key == "Enter"){
+
+         //save 
+         while(game.player_name.length<3){
+            game.player_name = game.player_name + "-";
+         }
+         game.newhighscore_menu.options[0].value = game.player_name;
+         game.highScoreManager.addHighScore(game.player_name, game.player_points);
+         game.highscore_menu.reload();
+         game.game_state = "menu";
+      }else if(key=="Backspace"){
+         game.player_name = game.player_name.substring(0, game.player_name.length -1);
+
+         game.newhighscore_menu.options[0].value = game.player_name;
+      }
+
+      return;
+   }
    if(e.key == " "){
       e.preventDefault();
 
@@ -220,15 +290,51 @@ window.onkeydown = function(e){
          game.unpause();
       }  
    }
+   if(e.key == "ArrowUp"){
+      if(game.game_state == "menu"){
+         game.menu.optionUp();
+      } else if(game.game_state == "highscore"){
+         game.menu.optionUp();
+      }else if(game.game_state =="game_over"){
+         game.over_menu.optionUp();
+      }
+   }
+   if(e.key == "ArrowDown"){
+      if(game.game_state == "menu"){
+         game.menu.optionDown();
+      } else if(game.game_state == "highscore"){
+         game.menu.optionDown();
+      }else if(game.game_state =="game_over"){
+         game.over_menu.optionDown();
+      }
+   }
    if(e.key == "Enter"){
       if(game.game_state == "menu"){
-         game.startGame();
+         if(game.menu.current_option == 0){
+            game.startGame();
+         }else {
+            game.game_state = "highscore";
+         }
+      }else if(game.game_state =="highscore"){
+         game.game_state = "menu";
+      } else if(game.game_state =="game_over"){
+         
+         if(game.over_menu.current_option == 0){
+            game.startGame();
+         } else {
+            game.game_state = "highscore";
+         }
       }
-
    }
    if(e.key == "Escape"){
       if(game.game_state == "playing"){
          game.pause();
+      }
+   }
+
+   if(e.key == "h"){
+      if(game.game_state == "menu"){
+         game.showHscore();
       }
    }
 

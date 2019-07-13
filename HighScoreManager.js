@@ -79,7 +79,6 @@ class HighScoreManager{
 		if(this.scores.length > this.max_scores){
 			this.scores.pop();
 		}
-		
 		this.save();
 	}
 }
