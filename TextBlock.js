@@ -14,14 +14,25 @@ function TextBlock(x, y, w, h){
 
 	this.settings.font = "14px Arial";
 	this.settings.font_color = "black";
-
+	this.settings.rounded_corners = 0;
 
 	this.init = function(){
 		/* used to change settings */
 	}
 	this.renderBackground = function(ctx){
 		ctx.fillStyle = this.settings.bg_color;
-		ctx.fillRect(this.x, this.y, this.width, this.height);
+		if(this.settings.rounded_corners == 0){
+			ctx.fillRect(this.x, this.y, this.width, this.height);
+		}else{
+			ctx.beginPath();
+			ctx.moveTo(this.x + this.settings.rounded_corners, this.y);
+			ctx.arcTo(this.x + this.width, this.y, this.x+this.width, this.y + this.height, this.settings.rounded_corners);
+			ctx.arcTo(this.x+this.width, this.y + this.height, this.x , this.y + this.height, this.settings.rounded_corners);
+			ctx.arcTo(this.x, this.y + this.height, this.x, this.y, this.settings.rounded_corners);
+			ctx.arcTo(this.x, this.y , this.x + this.width, this.y, this.settings.rounded_corners);
+			ctx.fill();
+		}
+
 	}
 	this.render = function(ctx){
 		

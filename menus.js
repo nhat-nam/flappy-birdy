@@ -117,8 +117,7 @@ function GameOverMenu(w, h){
     this.settings.options_x_pos = 120;
 	this.init = function(){
 		this.title = "Game Over";
-		this.options.push("Play Again");
-		this.options.push("High Scores");
+		this.options.push("Go Back To Menu");
 	}
 
 	this.renderBackground = function(ctx){
@@ -136,23 +135,27 @@ function GameOverMenu(w, h){
 function NewHighscoreMenu(w, h){
 	Menu.call(this, w, h);
     this.font = "14px 'Press Start 2P'";
-    this.settings.title_font_color = "orange";
+    this.settings.title_font_color = "black";
     this.settings.title_font = "100px 'FlappyBirdy'";
     this.settings.options_x_pos = 140;
     this.settings.options_y_pos = 280;
+    this.settings.title_x_pos = 70;
 
 	var menuOption = new InitialsMenuOption(this.settings.options_x_pos,this.settings.options_y_pos);
 	menuOption.value = "";
 	this.options.push(menuOption)
+	//HOW TO MAKE THE THINGS THINGIES
 
 	this.init = function(){
 		this.title = "Game Over";
 		var textBlock = new TextBlock(40, 140, this.width - 80, 300);
-		textBlock.settings.bg_color = "rgba(0,0,255,.2)";
-		textBlock.settings.font_color = "black";
+		textBlock.settings.bg_color = "rgba(255, 165, 0, .6)";
+		textBlock.settings.font_color = "white";
 		textBlock.settings.font = "24 'Press Start 2P'";
 		textBlock.settings.line_height = 50;
+		textBlock.settings.rounded_corners = 15;
 		textBlock.lines.push("New High Score");
+		textBlock.lines.push("Your Name + ENTER");
 		this.child_nodes.push(textBlock);
 		this.child_nodes.push(menuOption);
 	}

@@ -91,7 +91,7 @@ function Game(context, width, height) {
       }else if(this.game_state == "free_falling"){
          this.bird.update(delta);
 
-         if(this.bird.y + 10 >= HEIGHT){
+         if(this.bird.y - 10 >= HEIGHT){
             if(  this.highScoreManager.isHighScore( this.player_points ) ){
                // get their name
                this.game_state = "new_highscore";
@@ -265,7 +265,7 @@ window.onkeydown = function(e){
 
          //save 
          while(game.player_name.length<3){
-            game.player_name = game.player_name + "-";
+            game.player_name = game.player_name + " ";
          }
          game.newhighscore_menu.options[0].value = game.player_name;
          game.highScoreManager.addHighScore(game.player_name, game.player_points);
@@ -295,8 +295,6 @@ window.onkeydown = function(e){
          game.menu.optionUp();
       } else if(game.game_state == "highscore"){
          game.menu.optionUp();
-      }else if(game.game_state =="game_over"){
-         game.over_menu.optionUp();
       }
    }
    if(e.key == "ArrowDown"){
@@ -304,8 +302,6 @@ window.onkeydown = function(e){
          game.menu.optionDown();
       } else if(game.game_state == "highscore"){
          game.menu.optionDown();
-      }else if(game.game_state =="game_over"){
-         game.over_menu.optionDown();
       }
    }
    if(e.key == "Enter"){
@@ -320,10 +316,8 @@ window.onkeydown = function(e){
       } else if(game.game_state =="game_over"){
          
          if(game.over_menu.current_option == 0){
-            game.startGame();
-         } else {
-            game.game_state = "highscore";
-         }
+            game.game_state = "menu";
+         }      
       }
    }
    if(e.key == "Escape"){
