@@ -38,7 +38,6 @@ function HighScoreMenu(w, h, game){
     this._highscoreManager;
 
 	this.init = function(highscoreManager){
-		console.log(highscoreManager);
 		this._highscoreManager = highscoreManager
 		this.title = "High Scores";
 		this.options.push("Return");

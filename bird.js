@@ -88,4 +88,13 @@ this.collides = function(pipe){
 		} return false;
 	}
 
+	this.collides2 = function(powercube){
+		if(this.x + this.width_radius >= powercube.x
+			&& this.x - this.width_radius <= powercube.x + powercube.width
+			&& this.y - this.height_radius <= powercube.y + powercube.height
+			&& this.y + this.height_radius >= powercube.y )
+			{return true;
+		} return false;
+	}
+
 }

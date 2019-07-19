@@ -1,4 +1,3 @@
-
 WIDTH = 400;
 HEIGHT = 500;
 
@@ -47,19 +46,25 @@ function Game(context, width, height) {
    this.player_count = 1;
    this.player_points = 0;
    this.player_name = "";
+   this.point_multiplier = 1;
+
    // bird object
    this.bird = new Bird();
 
    // array of pipes
    this.pipes = [];
 
+   //power cube object
+   this.powercube = new PowerCube();
+
+   var powercube = this.powercube;
    /**
     * Reset game state variables
     */ 
    this.reset = function(){
       this.background_x = 0;
       this.bird.reset();
-      this.player_points = 0;
+      this.player_points = 0; 
 
       this.pipes = [];
       this.init_pipes();
@@ -117,7 +122,7 @@ function Game(context, width, height) {
             this.background_x = 0;
          }
 
-
+         this.powercube.update(delta);;
          this.bird.update(delta);
          /* check for top of screen and bottom of screen */
          if(this.bird.y <=10){
@@ -150,13 +155,16 @@ function Game(context, width, height) {
                }
             }
 
+         if(this.bird.collides2(powercube)){
+            this.powerUp();
+         }
 
             this.pipes.push(pipe);
          }         
      
          if( !this.pipes[0]._scored){
             if(this.bird.x >= this.pipes[0].x + this.pipes[0].width){
-               this.player_points++;
+               this.player_points += 1 * this.point_multiplier;
                this.pipes[0]._scored = true;
                this.soundManager.playSound("score");
             }
@@ -244,7 +252,34 @@ function Game(context, width, height) {
    this.showHscore = function(){
 
    }
+   this.powerUp = function(){
+      this.point_multiplier = 2;
+               setTimeout(
+            function(){ 
+               this.point_multiplier = 1;
+            },5000);
+   }
 }
+
+
+window.ontouchstart = function(e){
+
+   if(game.game_state == "playing"){
+         game.bird.flap();
+         game.soundManager.playSound("jump");
+   }else   if(game.game_state == "menu"){
+      if(game.menu.current_option == 0){
+         game.startGame();
+      }
+   }else if(game.game_state =="game_over"){
+         
+         if(game.over_menu.current_option == 0){
+            game.game_state = "menu";
+         } 
+   }
+
+}
+
 window.onkeydown = function(e){
 
    if(game.game_state == "new_highscore"){
@@ -252,7 +287,6 @@ window.onkeydown = function(e){
       var alphabet = "-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
       var key = e.key;
-      console.log(e);
       if(alphabet.indexOf(key)>=0){
 
          game.player_name = game.player_name + key.toUpperCase();
