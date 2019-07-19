@@ -40,7 +40,7 @@
 		<script type="text/javascript" src="./game.js"></script>
 		<script type="text/javascript">
 			if('serviceWorker' in navigator){
-				navigator.serviceWorker.register("./sw.js", {scope: "/"})
+				navigator.serviceWorker.register("./sw.js", {scope: "/flappy-birdy/"})
 					.then(function(registration){
 						console.log("Service Worker Registered");
 				});
