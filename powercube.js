@@ -12,11 +12,10 @@ function PowerCube(x, y){
 	this.img.src = "./powercube.png";
 
 	this.update = function(delta){
-	this.x = this.x + (this.dx * (delta/1000));
-
+		this.x = this.x + (this.dx * (delta/1000));
 	}
 
 	this.render = function(ctx){
-		ctx.drawImage(this.img, this.x, this.y);
+		ctx.drawImage(this.img, this.x, this.y, this.width, this.length);
 	}
 }

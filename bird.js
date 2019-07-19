@@ -73,7 +73,7 @@ function Bird(){
 		this.accel_y = 1000;
 	}
 	
-this.collides = function(pipe){
+	this.collides = function(pipe){
 		if(this.x + this.width_radius >= pipe.x
 			&& this.x - this.width_radius <= pipe.x + pipe.width
 			&& this.y - this.height_radius <= pipe.y + pipe.height
@@ -85,16 +85,18 @@ this.collides = function(pipe){
 			&& this.y + this.height_radius >= GAP + pipe.height ){
 
 			return true;
-		} return false;
+		} 
+		return false;
 	}
 
 	this.collides2 = function(powercube){
 		if(this.x + this.width_radius >= powercube.x
 			&& this.x - this.width_radius <= powercube.x + powercube.width
 			&& this.y - this.height_radius <= powercube.y + powercube.height
-			&& this.y + this.height_radius >= powercube.y )
-			{return true;
-		} return false;
+			&& this.y + this.height_radius >= powercube.y ){
+			return true;
+		} 
+		return false;
 	}
 
 }

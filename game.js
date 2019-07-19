@@ -55,9 +55,8 @@ function Game(context, width, height) {
    this.pipes = [];
 
    //power cube object
-   this.powercube = new PowerCube();
+   this.powercube = new PowerCube(-100, -100);
 
-   var powercube = this.powercube;
    /**
     * Reset game state variables
     */ 
@@ -70,6 +69,13 @@ function Game(context, width, height) {
       this.init_pipes();
       this.over_menu.current_option = 0;
       this.menu.current_option = 0;
+
+      //reset powercube
+
+      var y = Math.random()*(HEIGHT - this.powercube.length*2) + this.powercube.length;
+      var x = 1065 + PIPE_SPACING*Math.random() * 10;
+      this.powercube.x = x;
+      this.powercube.y = y;
    }
 
    /**
@@ -122,7 +128,11 @@ function Game(context, width, height) {
             this.background_x = 0;
          }
 
-         this.powercube.update(delta);;
+         this.powercube.update(delta);
+
+         /* if powercube is off screen, randomly create new powercube location ahead of bird */
+
+
          this.bird.update(delta);
          /* check for top of screen and bottom of screen */
          if(this.bird.y <=10){
@@ -155,7 +165,7 @@ function Game(context, width, height) {
                }
             }
 
-         if(this.bird.collides2(powercube)){
+         if(this.bird.collides2( this.powercube ) ){
             this.powerUp();
          }
 
@@ -205,7 +215,10 @@ function Game(context, width, height) {
             }
 
             this.drawScore();
+            
+            //this.powercube.render(this.ctx);
             this.bird.render(this.ctx);
+
             if(this.game_state == "game_over"){
 
                this.over_menu.render(this.ctx);
