@@ -20,7 +20,7 @@ function Game(context, width, height) {
    // Background image -- 1157 x 288. 
    this.background = new Image();
    this.background.src = "./background.png";
-   this.background_speed = -200;
+   this.background_speed = -50;
    this.background_width = (HEIGHT/288)*1157;
    this.background_x = 0;
 
@@ -73,7 +73,7 @@ function Game(context, width, height) {
       //reset powercube
 
       var y = Math.random()*(HEIGHT - this.powercube.length*2) + this.powercube.length;
-      var x = 1065 + PIPE_SPACING*Math.random() * 10;
+      var x = 1315 + PIPE_SPACING*(5+(Math.random() * 1)) ;
       this.powercube.x = x;
       this.powercube.y = y;
    }
@@ -131,6 +131,10 @@ function Game(context, width, height) {
          this.powercube.update(delta);
 
          /* if powercube is off screen, randomly create new powercube location ahead of bird */
+         if(this.powercube.x < -10){
+            this.powercube.x = 1315;
+            this.powercube.y = Math.random()*HEIGHT;
+         }
 
 
          this.bird.update(delta);
@@ -164,14 +168,13 @@ function Game(context, width, height) {
                   pipe.height= this.pipes[this.pipes.length-1].height + MAX_HEIGHT_DIFFERENCE;
                }
             }
-
+            this.pipes.push(pipe);
+         }         
+     
          if(this.bird.collides2( this.powercube ) ){
             this.powerUp();
          }
 
-            this.pipes.push(pipe);
-         }         
-     
          if( !this.pipes[0]._scored){
             if(this.bird.x >= this.pipes[0].x + this.pipes[0].width){
                this.player_points += 1 * this.point_multiplier;
@@ -216,7 +219,7 @@ function Game(context, width, height) {
 
             this.drawScore();
             
-            //this.powercube.render(this.ctx);
+            this.powercube.render(this.ctx);
             this.bird.render(this.ctx);
 
             if(this.game_state == "game_over"){
@@ -267,10 +270,12 @@ function Game(context, width, height) {
    }
    this.powerUp = function(){
       this.point_multiplier = 2;
-               setTimeout(
+      var game = this;
+      setTimeout(
             function(){ 
-               this.point_multiplier = 1;
-            },5000);
+               game.point_multiplier = 1;
+            }
+      ,5000);
    }
 }
 

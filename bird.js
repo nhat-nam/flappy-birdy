@@ -1,6 +1,6 @@
 function Bird(){
 
-	this.x = 200
+	this.x = 150;
 	this.y = 0
 
 	this.dx = 0;
@@ -65,7 +65,7 @@ function Bird(){
 		//this.accel_y = 0;
 	}
 	this.reset = function(){
-		this.x = 200
+		this.x = 150;
 		this.y = 0
 
 		this.dx = 0;
@@ -90,9 +90,9 @@ function Bird(){
 	}
 
 	this.collides2 = function(powercube){
-		if(this.x + this.width_radius >= powercube.x
+		if(	this.x + this.width_radius >= powercube.x
 			&& this.x - this.width_radius <= powercube.x + powercube.width
-			&& this.y - this.height_radius <= powercube.y + powercube.height
+			&& this.y - this.height_radius <= powercube.y + powercube.length
 			&& this.y + this.height_radius >= powercube.y ){
 			return true;
 		} 

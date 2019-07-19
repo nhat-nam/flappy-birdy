@@ -5,11 +5,11 @@ function PowerCube(x, y){
 	this.dx = -200;
 	this.dy = 0;
 
-	this.width = 65;
-	this.length = 65;
+	this.width = 32;
+	this.length = 32;
 
 	this.img = new Image();
-	this.img.src = "./powercube.png";
+	this.img.src = "./powerup.png";
 
 	this.update = function(delta){
 		this.x = this.x + (this.dx * (delta/1000));
