@@ -22,6 +22,7 @@ self.addEventListener("install", event => {
 				'./TextBlock.js',
 				'./jump.wav',
 				'./score.wav',
+				'./powerup.wav',
 				'./FlappyBirdy.ttf',
 				'./PressStart2P-Regular.ttf'
 			]).then(() => self.skipWaiting());

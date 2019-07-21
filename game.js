@@ -120,6 +120,8 @@ function Game(context, width, height) {
 
       }else if(this.game_state == "menu"){
          
+      }else if(this.game_state == "powerphase"){
+         this.soundManager.playSound("powerup");
       }else if(this.game_state == "playing" ){
          /* update background */
 
@@ -130,10 +132,11 @@ function Game(context, width, height) {
 
          this.powercube.update(delta);
 
-         /* if powercube is off screen, randomly create new powercube location ahead of bird */
+         /* if powercube is off screen, randomly create new powercube location ahead of bird, reset power cube gotten state */
          if(this.powercube.x < -10){
             this.powercube.x = 1315;
             this.powercube.y = Math.random()*HEIGHT;
+            this._scored = "false";
          }
 
 
@@ -171,8 +174,18 @@ function Game(context, width, height) {
             this.pipes.push(pipe);
          }         
      
-         if(this.bird.collides2( this.powercube ) ){
-            this.powerUp();
+         if( !this.powercube._gotten){   
+            if(this.bird.collidesPower( this.powercube ) ){
+               this.game_state = "powerphase";
+               var game = this;
+               setTimeout(
+               function(){ 
+                  this._gotten = "true";
+                  this.powerUp();
+                  this.game_state = "playing";
+               }
+                  ,1300);
+            }
          }
 
          if( !this.pipes[0]._scored){
@@ -219,7 +232,10 @@ function Game(context, width, height) {
 
             this.drawScore();
             
+         if( !this.powercube._gotten){   
             this.powercube.render(this.ctx);
+         }  
+            
             this.bird.render(this.ctx);
 
             if(this.game_state == "game_over"){

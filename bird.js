@@ -89,7 +89,7 @@ function Bird(){
 		return false;
 	}
 
-	this.collides2 = function(powercube){
+	this.collidesPower = function(powercube){
 		if(	this.x + this.width_radius >= powercube.x
 			&& this.x - this.width_radius <= powercube.x + powercube.width
 			&& this.y - this.height_radius <= powercube.y + powercube.length

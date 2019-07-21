@@ -111,9 +111,10 @@ function GameOverMenu(w, h){
 	Menu.call(this, w, h);
 
     this.font = "14px 'Press Start 2P'";
-    this.settings.title_font_color = "orange";
+    this.settings.title_font_color = "black";
     this.settings.title_font = "100px 'FlappyBirdy'";
-    this.settings.options_x_pos = 120;
+    this.settings.options_x_pos = 110;
+    this.settings.title_x_pos = 70;
 	this.init = function(){
 		this.title = "Game Over";
 		this.options.push("Go Back To Menu");
