@@ -231,15 +231,12 @@ function Game(context, width, height) {
 
             this.highscore_menu.render(this.ctx);
 
-         }else if(this.game_state == "paused"){
-            for(var i=0; i< this.pipes.length;i++){
-               var pipe = this.pipes[i];
-               pipe.render(this.ctx);
-            }
-            this.bird.render(this.ctx);
-            this.drawScore();
-            this.drawInstructions();
          }else{
+            /* 
+               Game scene
+            */
+
+
             for(var i=0; i< this.pipes.length;i++){
                var pipe = this.pipes[i];
                pipe.render(this.ctx);
@@ -249,12 +246,11 @@ function Game(context, width, height) {
             
             this.powercube.render(this.ctx);  
             this.bird.render(this.ctx);
-
-            if(this.game_state == "game_over"){
-
+            if(this.game_state == "paused"){
+               this.drawInstructions();
+            }else if(this.game_state == "game_over"){
                this.over_menu.render(this.ctx);
             }else if(this.game_state == "new_highscore"){
-               // 
                this.newhighscore_menu.render(this.ctx);
             }
          }
