@@ -40,6 +40,7 @@ function Game(context, width, height) {
    this.soundManager = new SoundManager();
    this.soundManager.addSound("jump", document.getElementById("jump-sound"));
    this.soundManager.addSound("score", document.getElementById("score-sound"));
+   this.soundManager.addSound("powerup", document.getElementById("powerup-sound"));
 
    // game state variables
    this.game_state = "menu";
@@ -55,7 +56,7 @@ function Game(context, width, height) {
    this.pipes = [];
 
    //power cube object
-   this.powercube = new PowerCube(-100, -100);
+   this.powercube = new PowerCube(300, 250);
 
    /**
     * Reset game state variables
@@ -74,8 +75,8 @@ function Game(context, width, height) {
 
       var y = Math.random()*(HEIGHT - this.powercube.length*2) + this.powercube.length;
       var x = 1315 + PIPE_SPACING*(5+(Math.random() * 1)) ;
-      this.powercube.x = x;
-      this.powercube.y = y;
+      this.powercube.x = 300
+      this.powercube.y = 250;
    }
 
    /**
@@ -111,17 +112,15 @@ function Game(context, width, height) {
             }
          }
       }else if(this.game_state == "game_over"){
-
          this.bird.update(delta);
          //once bird is off the screen...then switch game states...
-
       }else if(this.game_state == "high_score"){
          this.bird.update(delta);
-
-      }else if(this.game_state == "menu"){
-         
       }else if(this.game_state == "powerphase"){
-         this.soundManager.playSound("powerup");
+
+         // momentarily stop updating objects         
+
+
       }else if(this.game_state == "playing" ){
          /* update background */
 
@@ -133,10 +132,9 @@ function Game(context, width, height) {
          this.powercube.update(delta);
 
          /* if powercube is off screen, randomly create new powercube location ahead of bird, reset power cube gotten state */
-         if(this.powercube.x < -10){
-            this.powercube.x = 1315;
-            this.powercube.y = Math.random()*HEIGHT;
-            this._scored = "false";
+         if(this.powercube.x  < -1 * this.powercube.width){
+            this.powercube.x = this.pipes[this.pipes.length-1].x + 140;
+            this.powercube.y = 100 + Math.random()*(HEIGHT-200);  
          }
 
 
@@ -174,19 +172,36 @@ function Game(context, width, height) {
             this.pipes.push(pipe);
          }         
      
-         if( !this.powercube._gotten){   
             if(this.bird.collidesPower( this.powercube ) ){
                this.game_state = "powerphase";
+               this.soundManager.playSound("powerup");
+               this.powercube.fillStyle = "rgba(200,0,0,.4)";
                var game = this;
+
+               setTimeout(function(){
+                  game.powercube.fillStyle = "rgba(0,0,0,0)";
+               },250);
+               setTimeout(function(){
+                  game.powercube.fillStyle = "rgba(200,0,0,.4)";
+               },500);
+               setTimeout(function(){
+                  game.powercube.fillStyle = "rgba(0,0,0,0)";
+               },750);
+               setTimeout(function(){
+                  game.powercube.fillStyle = "rgba(200,0,0,.4)";
+               },1000);
+
                setTimeout(
-               function(){ 
-                  this._gotten = "true";
-                  this.powerUp();
-                  this.game_state = "playing";
-               }
-                  ,1300);
+                  function(){ 
+                     game.powercube.fillStyle = "rgba(0,0,0,0)";
+                     game.powercube.x = game.pipes[game.pipes.length-1].x + 140;
+                     game.powercube.y = 100 + Math.random()*(HEIGHT-200);  
+                     game.powerUp();
+                     game.game_state = "playing";
+                  },
+               1250);
             }
-         }
+         
 
          if( !this.pipes[0]._scored){
             if(this.bird.x >= this.pipes[0].x + this.pipes[0].width){
@@ -232,10 +247,7 @@ function Game(context, width, height) {
 
             this.drawScore();
             
-         if( !this.powercube._gotten){   
-            this.powercube.render(this.ctx);
-         }  
-            
+            this.powercube.render(this.ctx);  
             this.bird.render(this.ctx);
 
             if(this.game_state == "game_over"){
@@ -376,8 +388,10 @@ window.onkeydown = function(e){
       if(game.game_state == "menu"){
          if(game.menu.current_option == 0){
             game.startGame();
-         }else {
+         }else if(game.menu.current_option == 1){
             game.game_state = "highscore";
+         }else if(game.menu.current_option == 2){
+            game.game_state = "gameinstructionss";
          }
       }else if(game.game_state =="highscore"){
          game.game_state = "menu";

@@ -11,6 +11,7 @@ function FlappyMenu(w, h, game){
 		this.title = "Flappy Birdy";
 		this.options.push("Start game!");
 		this.options.push("High scores");
+		this.options.push("Instructions");
 	}
 
 	this.renderBackground = function(ctx){
@@ -119,7 +120,7 @@ function GameOverMenu(w, h){
 		this.title = "Game Over";
 		this.options.push("Go Back To Menu");
 	}
-
+	
 	this.renderBackground = function(ctx){
 //		ctx.drawImage(this.background,0,0);
 //		ctx.drawImage(this.background,0,0, this.background_width, HEIGHT);
