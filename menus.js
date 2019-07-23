@@ -33,8 +33,8 @@ function HighScoreMenu(w, h, game){
     this.background_width = (HEIGHT/288)*1157;
     this.font = "14px 'Press Start 2P'";
     this.settings.title_font = "100px 'FlappyBirdy'";
-    this.settings.options_y_pos = 480;
-    this.settings.options_x_pos = 120;
+    this.settings.options_y_pos = 450;
+   	this.settings.options_x_pos = 150;
 
     this._highscoreManager;
 
@@ -42,6 +42,7 @@ function HighScoreMenu(w, h, game){
 		this._highscoreManager = highscoreManager
 		this.title = "High Scores";
 		this.options.push("Return");
+		this.options.push("Reset High Scores");
 
 		var textBlock = new TextBlock(40, 140, w-80, 300);
 		textBlock.settings.bg_color = "rgba(0,0,0,0)";
@@ -120,7 +121,7 @@ function GameOverMenu(w, h){
 		this.title = "Game Over";
 		this.options.push("Go Back To Menu");
 	}
-	
+
 	this.renderBackground = function(ctx){
 //		ctx.drawImage(this.background,0,0);
 //		ctx.drawImage(this.background,0,0, this.background_width, HEIGHT);

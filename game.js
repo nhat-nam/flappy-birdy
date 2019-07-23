@@ -48,6 +48,7 @@ function Game(context, width, height) {
    this.player_points = 0;
    this.player_name = "";
    this.point_multiplier = 1;
+   var random_power = Math.floor(Math.random() * 2);  
 
    // bird object
    this.bird = new Bird();
@@ -173,34 +174,39 @@ function Game(context, width, height) {
          }         
      
             if(this.bird.collidesPower( this.powercube ) ){
-               this.game_state = "powerphase";
-               this.soundManager.playSound("powerup");
-               this.powercube.fillStyle = "rgba(200,0,0,.4)";
-               var game = this;
+                  this.game_state = "powerphase";
+                  this.soundManager.playSound("powerup");
+                   alert(random_power)
+                  this.powercube.fillStyle = "rgba(200,0,0,.4)";
+                  var game = this;
 
-               setTimeout(function(){
-                  game.powercube.fillStyle = "rgba(0,0,0,0)";
-               },250);
-               setTimeout(function(){
-                  game.powercube.fillStyle = "rgba(200,0,0,.4)";
-               },500);
-               setTimeout(function(){
-                  game.powercube.fillStyle = "rgba(0,0,0,0)";
-               },750);
-               setTimeout(function(){
-                  game.powercube.fillStyle = "rgba(200,0,0,.4)";
-               },1000);
-
-               setTimeout(
-                  function(){ 
+                  setTimeout(function(){
                      game.powercube.fillStyle = "rgba(0,0,0,0)";
-                     game.powercube.x = game.pipes[game.pipes.length-1].x + 140;
-                     game.powercube.y = 100 + Math.random()*(HEIGHT-200);  
-                     game.powerUp();
-                     game.game_state = "playing";
-                  },
-               1250);
-            }
+                  },250);
+                  setTimeout(function(){
+                     game.powercube.fillStyle = "rgba(200,0,0,.4)";
+                  },500);
+                  setTimeout(function(){
+                     game.powercube.fillStyle = "rgba(0,0,0,0)";
+                  },750);
+                  setTimeout(function(){
+                     game.powercube.fillStyle = "rgba(200,0,0,.4)";
+                  },1000);
+
+                  setTimeout(
+                     function(){ 
+                        game.powercube.fillStyle = "rgba(0,0,0,0)";
+                        game.powercube.x = game.pipes[game.pipes.length-1].x + 140;
+                        game.powercube.y = 100 + Math.random()*(HEIGHT-200);  
+                           if(random_power == 0){
+                              game.powerDoublePoints();
+                           } else if(random_power == 1){
+                              game.powerEasyControl();
+                           }
+                        game.game_state = "playing";
+                     },
+                  1250);
+         }
          
 
          if( !this.pipes[0]._scored){
@@ -228,22 +234,20 @@ function Game(context, width, height) {
          if(this.game_state == "menu"){
             this.menu.render(this.ctx);
          }else if(this.game_state == "highscore"){
-
             this.highscore_menu.render(this.ctx);
-
+         }else if(this.game_state == "gameinstructions"){
+            this.gameinstructions_menu.render(this.ctx);
          }else{
             /* 
                Game scene
             */
-
-
             for(var i=0; i< this.pipes.length;i++){
                var pipe = this.pipes[i];
                pipe.render(this.ctx);
             }
 
             this.drawScore();
-            
+      
             this.powercube.render(this.ctx);  
             this.bird.render(this.ctx);
             if(this.game_state == "paused"){
@@ -292,7 +296,7 @@ function Game(context, width, height) {
    this.showHscore = function(){
 
    }
-   this.powerUp = function(){
+   this.powerDoublePoints = function(){
       this.point_multiplier = 2;
       var game = this;
       setTimeout(
@@ -301,7 +305,24 @@ function Game(context, width, height) {
             }
       ,5000);
    }
-}
+
+   this.powerEasyControl = function(){
+      for(var i=0; i< this.pipes.length;i++){
+            var pipe = this.pipes[i];
+         }
+         if( !this.bird.collides(pipe)){
+            this.bird.affected_by_gravity = false;
+         } else{
+            this.bird.affected_by_gravity = true;
+         }
+         var game = this;
+         setTimeout(
+               function(){ 
+                  game.bird.affected_by_gravity = true;
+               }
+         ,8000);
+      }
+   }
 
 
 window.ontouchstart = function(e){
@@ -309,7 +330,7 @@ window.ontouchstart = function(e){
    if(game.game_state == "playing"){
          game.bird.flap();
          game.soundManager.playSound("jump");
-   }else   if(game.game_state == "menu"){
+   }else if(game.game_state == "menu"){
       if(game.menu.current_option == 0){
          game.startGame();
       }
@@ -361,7 +382,6 @@ window.onkeydown = function(e){
       // add game_state checks her
       if(game.game_state == "playing"){
          game.bird.flap();
-         game.soundManager.playSound("jump");
       }else if (game.game_state == "paused"){
          game.unpause();
       }  
@@ -371,13 +391,22 @@ window.onkeydown = function(e){
          game.menu.optionUp();
       } else if(game.game_state == "highscore"){
          game.menu.optionUp();
+      } else if(game.game_state == "playing"){
+         if(game.bird.affected_by_gravity == false){
+            game.bird.y = game.bird.y - 30;   
+            ;
+         }
       }
    }
    if(e.key == "ArrowDown"){
       if(game.game_state == "menu"){
          game.menu.optionDown();
-      } else if(game.game_state == "highscore"){
+      }else if(game.game_state == "highscore"){
          game.menu.optionDown();
+      }else if(game.game_state == "playing"){
+         if(game.bird.affected_by_gravity == false){
+            game.bird.y = game.bird.y + 30;
+         }
       }
    }
    if(e.key == "Enter"){
@@ -387,11 +416,15 @@ window.onkeydown = function(e){
          }else if(game.menu.current_option == 1){
             game.game_state = "highscore";
          }else if(game.menu.current_option == 2){
-            game.game_state = "gameinstructionss";
+            game.game_state = "gameinstructions";
          }
-      }else if(game.game_state =="highscore"){
-         game.game_state = "menu";
-      } else if(game.game_state =="game_over"){
+      }else if(game.game_state =="highscore"){ 
+         if(game.menu.current_option == 0){
+            game.game_state = "menu";
+         }else if(game.menu.current_option == 1){
+            game.HighScoreManager.clearScore();
+         }
+      }else if(game.game_state =="game_over"){
          
          if(game.over_menu.current_option == 0){
             game.game_state = "menu";
