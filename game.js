@@ -16,7 +16,7 @@ function Game(context, width, height) {
    this.height = height;
    this._delta = 1000/100;
 
-   this.timer = 0;
+   this.powerup_timer = 0;
    // Background image -- 1157 x 288. 
    this.background = new Image();
    this.background.src = "./background.png";
@@ -97,9 +97,7 @@ function Game(context, width, height) {
    **/
    this.update = function(delta) {
       
-      if(this.timer > 0){
-         this.timer = this.timer - delta;
-      }
+      
       if(this.game_state == "paused"){
 
       }else if(this.game_state == "free_falling"){
@@ -126,7 +124,11 @@ function Game(context, width, height) {
 
       }else if(this.game_state == "playing" ){
          /* update background */
-
+         if(this.powerup_timer > 0){
+            this.powerup_timer = this.powerup_timer - delta;
+         }else{
+            this.point_multiplier = 1;
+         }
          this.background_x = this.background_x + this.background_speed * (delta/1000);
          if(this.background_x < -1* this.background_width + WIDTH+260){
             this.background_x = 0;
@@ -291,8 +293,8 @@ function Game(context, width, height) {
    this.drawScore = function(){
       ctx.font = "25px 'Press Start 2P'";
       ctx.fillText(this.player_points, 80, 50);
-      if(this.point_multiplier == 2){
-         ctx.fillText(""+Math.floor(this.timer/1000) + "."+Math.floor(this.timer/10)%100, 280, 50);
+      if(this.point_multiplier == 2 && this.game_state == "playing"){
+         ctx.fillText(""+Math.floor(this.powerup_timer/1000) + "."+Math.floor(this.powerup_timer/10)%100, 280, 50);
       }
       ctx.filStyle = "black";
    }
@@ -320,13 +322,7 @@ function Game(context, width, height) {
    }
    this.powerDoublePoints = function(){
       this.point_multiplier = 2;
-      var game = this;
-      game.timer = 5000;
-      setTimeout(
-            function(){ 
-               game.point_multiplier = 1;
-            }
-      ,5000);
+      this.powerup_timer = 5000;
    }
 
    this.powerEasyControl = function(){
