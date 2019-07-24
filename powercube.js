@@ -8,6 +8,8 @@ function PowerCube(x, y){
 	this.width = 40;
 	this.length = 40;
 	this._gotten = false;
+	this.number_of_powerups = 1
+	this.random_power = 0;
 
 
 	this.img = new Image();

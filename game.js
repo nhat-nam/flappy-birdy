@@ -16,7 +16,7 @@ function Game(context, width, height) {
    this.height = height;
    this._delta = 1000/100;
 
-
+   this.timer = 0;
    // Background image -- 1157 x 288. 
    this.background = new Image();
    this.background.src = "./background.png";
@@ -47,8 +47,7 @@ function Game(context, width, height) {
    this.player_count = 1;
    this.player_points = 0;
    this.player_name = "";
-   this.point_multiplier = 1;
-   var random_power = Math.floor(Math.random() * 2);  
+   this.point_multiplier = 1;  
 
    // bird object
    this.bird = new Bird();
@@ -98,14 +97,17 @@ function Game(context, width, height) {
    **/
    this.update = function(delta) {
       
-  
+      if(this.timer > 0){
+         this.timer = this.timer - delta;
+      }
       if(this.game_state == "paused"){
 
       }else if(this.game_state == "free_falling"){
+         this.bird.affected_by_gravity = true;
          this.bird.update(delta);
 
          if(this.bird.y - 10 >= HEIGHT){
-            if(  this.highScoreManager.isHighScore( this.player_points ) ){
+            if(  this.player_points > 0 && this.highScoreManager.isHighScore( this.player_points ) ){
                // get their name
                this.game_state = "new_highscore";
             } else{
@@ -174,9 +176,9 @@ function Game(context, width, height) {
          }         
      
             if(this.bird.collidesPower( this.powercube ) ){
+                  this.powercube.random_power = Math.floor(Math.random() * this.powercube.number_of_powerups);
                   this.game_state = "powerphase";
                   this.soundManager.playSound("powerup");
-                   alert(random_power)
                   this.powercube.fillStyle = "rgba(200,0,0,.4)";
                   var game = this;
 
@@ -198,9 +200,9 @@ function Game(context, width, height) {
                         game.powercube.fillStyle = "rgba(0,0,0,0)";
                         game.powercube.x = game.pipes[game.pipes.length-1].x + 140;
                         game.powercube.y = 100 + Math.random()*(HEIGHT-200);  
-                           if(random_power == 0){
+                           if(game.powercube.random_power == 0){
                               game.powerDoublePoints();
-                           } else if(random_power == 1){
+                           } else if(game.powercube.random_power == 1){
                               game.powerEasyControl();
                            }
                         game.game_state = "playing";
@@ -256,11 +258,28 @@ function Game(context, width, height) {
                this.over_menu.render(this.ctx);
             }else if(this.game_state == "new_highscore"){
                this.newhighscore_menu.render(this.ctx);
+            }else if(this.game_state == "powerphase"){
+               if(this.powercube.random_power == 0){
+                  this.drawX2();
+               } else if(this.powercube.random_power == 1){
+                  this.drawEzControl();
+               }
             }
-         }
+      }
 
    }
 
+   this.drawX2 = function(){
+      ctx.font = "900 16px 'Press Start 2P'";
+      ctx.fillText("Double Points", 40, 100);
+      ctx.fillStyle="black";
+   }
+
+   this.drawEzControl = function(){
+      ctx.font = "900 16px 'Press Start 2P'";
+      ctx.fillText("Easy Control", 40, 100);
+      ctx.fillStyle="black";
+   }
    this.drawInstructions = function(){
       ctx.font = "900 16px 'Press Start 2P'";
       ctx.fillStyle="black";
@@ -272,6 +291,9 @@ function Game(context, width, height) {
    this.drawScore = function(){
       ctx.font = "25px 'Press Start 2P'";
       ctx.fillText(this.player_points, 80, 50);
+      if(this.point_multiplier == 2){
+         ctx.fillText(""+Math.floor(this.timer/1000) + "."+Math.floor(this.timer/10)%100, 280, 50);
+      }
       ctx.filStyle = "black";
    }
    this.init_pipes = function(){
@@ -299,6 +321,7 @@ function Game(context, width, height) {
    this.powerDoublePoints = function(){
       this.point_multiplier = 2;
       var game = this;
+      game.timer = 5000;
       setTimeout(
             function(){ 
                game.point_multiplier = 1;
@@ -307,14 +330,7 @@ function Game(context, width, height) {
    }
 
    this.powerEasyControl = function(){
-      for(var i=0; i< this.pipes.length;i++){
-            var pipe = this.pipes[i];
-         }
-         if( !this.bird.collides(pipe)){
-            this.bird.affected_by_gravity = false;
-         } else{
-            this.bird.affected_by_gravity = true;
-         }
+      this.bird.affected_by_gravity = false;
          var game = this;
          setTimeout(
                function(){ 
@@ -388,9 +404,12 @@ window.onkeydown = function(e){
    }
    if(e.key == "ArrowUp"){
       if(game.game_state == "menu"){
+      
          game.menu.optionUp();
+      
+
       } else if(game.game_state == "highscore"){
-         game.menu.optionUp();
+         game.highscore_menu.optionUp();
       } else if(game.game_state == "playing"){
          if(game.bird.affected_by_gravity == false){
             game.bird.y = game.bird.y - 30;   
@@ -402,7 +421,7 @@ window.onkeydown = function(e){
       if(game.game_state == "menu"){
          game.menu.optionDown();
       }else if(game.game_state == "highscore"){
-         game.menu.optionDown();
+         game.highscore_menu.optionDown();
       }else if(game.game_state == "playing"){
          if(game.bird.affected_by_gravity == false){
             game.bird.y = game.bird.y + 30;
@@ -419,11 +438,16 @@ window.onkeydown = function(e){
             game.game_state = "gameinstructions";
          }
       }else if(game.game_state =="highscore"){ 
-         if(game.menu.current_option == 0){
+         if(game.highscore_menu.current_option == 0){
             game.game_state = "menu";
-         }else if(game.menu.current_option == 1){
-            game.HighScoreManager.clearScore();
+         }else if(game.highscore_menu.current_option == 1){
+            game.highScoreManager.clearScores();
+            game.highscore_menu.reload();
+
          }
+
+
+
       }else if(game.game_state =="game_over"){
          
          if(game.over_menu.current_option == 0){
