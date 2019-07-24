@@ -251,6 +251,10 @@ function Game(context, width, height) {
             }
 
             this.drawScore();
+            if(this.point_multiplier == 2){
+               ctx.fillText(""+Math.floor(this.powerup_timer/1000) + "."+Math.floor(this.powerup_timer/10)%100, 280, 50);
+               ctx.fillStyle = "white";
+            }
       
             this.powercube.render(this.ctx);  
             this.bird.render(this.ctx);
@@ -293,9 +297,6 @@ function Game(context, width, height) {
    this.drawScore = function(){
       ctx.font = "25px 'Press Start 2P'";
       ctx.fillText(this.player_points, 80, 50);
-      if(this.point_multiplier == 2 && this.game_state == "playing"){
-         ctx.fillText(""+Math.floor(this.powerup_timer/1000) + "."+Math.floor(this.powerup_timer/10)%100, 280, 50);
-      }
       ctx.filStyle = "black";
    }
    this.init_pipes = function(){
@@ -316,6 +317,7 @@ function Game(context, width, height) {
    this.startGame = function(){
       this.reset();
       this.game_state = "playing";
+      this.powerup_timer = 0;
    }
    this.showHscore = function(){
 
