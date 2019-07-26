@@ -338,15 +338,18 @@ function Game(context, width, height) {
          ,8000);
       }
    }
+window.ontouchstart = function(e){
 
+   if(game.game_state == "playing"){
+      game.bird.flap();
+      game.soundManager.playSound("jump");
+   }
 
+}
 window.ontouchend = function(e){
 
    if(!game.swiped){
-      if(game.game_state == "playing"){
-            game.bird.flap();
-            game.soundManager.playSound("jump");
-      }else if(game.game_state == "menu"){
+      if(game.game_state == "menu"){
          if(game.menu.current_option == 0){
             game.startGame();
          }else if(game.menu.current_option == 1){
