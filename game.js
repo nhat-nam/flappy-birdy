@@ -114,21 +114,21 @@ function Game(context, width, height) {
                // get their name
                this.game_state = "new_highscore";
 
-               } else if(mobilecheck()){
+               if(mobilecheck()){
                   this.player_name = prompt("New high score! Enter your initials (only the first 3 characters will be included): ");
                      if(this.player_name.length > 3){
                         this.player_name = this.player_name.substring(0,3);
                   }
                   //save 
-                     while(this.player_name.length<3){
+                  while(this.player_name.length<3){
                         this.player_name = this.player_name + " ";
                   }
-                     this.newhighscore_menu.options[0].value = this.player_name;
-                     this.highScoreManager.addHighScore(this.player_name, this.player_points);
-                     this.highscore_menu.reload();
+                  this.newhighscore_menu.options[0].value = this.player_name;
+                  this.highScoreManager.addHighScore(this.player_name, this.player_points);
+                  this.highscore_menu.reload();
                }
 
-            else{
+            }else{
                this.game_state = "game_over";
             }
          }
@@ -386,6 +386,8 @@ window.ontouchend = function(e){
             game.highScoreManager.clearScores();
             game.highscore_menu.reload();
          }
+      }else if(game.game_state == "new_highscore"){
+         game.game_state = "menu";
       }
    }else{
       if(game.game_state == "menu"){
