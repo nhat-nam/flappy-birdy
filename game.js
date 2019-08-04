@@ -116,6 +116,9 @@ function Game(context, width, height) {
 
                if(mobilecheck()){
                   this.player_name = prompt("New high score! Enter your initials (only the first 3 characters will be included): ");
+                     if(this.player_name == null){
+                        this.player_name = ""; 
+                     }
                      if(this.player_name.length > 3){
                         this.player_name = this.player_name.substring(0,3);
                   }
